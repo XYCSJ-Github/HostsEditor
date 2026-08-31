@@ -1,13 +1,5 @@
 ﻿#include "hosts_io.h"
 
-hosts_io::~hosts_io()
-{
-	for (hosts_group* g : groups)
-	{
-		delete g;
-	}
-}
-
 void hosts_io::loadfile()
 {
 	if (this->hosts_path.empty()) throw EmptyString("未指定hosts文件路径");
@@ -43,7 +35,7 @@ std::string hosts_io::trim(const std::string& str)
     return str.substr(first, last - first + 1);
 }
 
-std::vector<hosts_group> hosts_io::find_block(const std::string& data)
+hosts_group hosts_io::find_block(const std::string& data)
 {
     std::regex startPattern(R"(#(\w+)\s+Start)");
     std::regex endPattern(R"(#(\w+)\s+End)");
@@ -56,10 +48,11 @@ std::vector<hosts_group> hosts_io::find_block(const std::string& data)
     std::string currentStart;
     std::vector<std::string> currentLines;
 
+    hosts_group hg;
+
     while (std::getline(iss, line))
     {
         std::string trimmed = trim(line);
-        hosts_group hg;
 
         if (std::regex_match(trimmed, match, startPattern))
         {
@@ -71,7 +64,7 @@ std::vector<hosts_group> hosts_io::find_block(const std::string& data)
                 .end_makeer = "#" + match[1].str() + " End",
                 .data_line = currentLines,
                 };
-                hg.add_host_pair(hig);
+                hg.add_host_group(hig);
                 currentLines.clear();
             }
 
@@ -89,15 +82,28 @@ std::vector<hosts_group> hosts_io::find_block(const std::string& data)
                 .end_makeer = trimmed,
                 .data_line = currentLines
             };
-            hg.add_host_pair(hig);
+            hg.add_host_group(hig);
+            currentLines.clear();
+            continue;
         }
 
         if (inBlock)
         {
+            currentLines.push_back(line);
+        }
 
+        if (inBlock && !currentLines.empty())
+        {
+            hosts_info_group hig
+            {
+                .start_makeer = currentStart,
+                .end_makeer = "",
+                .data_line = currentLines
+            };
+            hg.add_host_group(hig);
         }
     }
 
-    return std::vector<hosts_group>();
+    return hg;
 }
 

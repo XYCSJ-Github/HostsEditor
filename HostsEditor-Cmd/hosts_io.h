@@ -13,7 +13,7 @@ public:
 	void Analyse();
 
 	std::string trim(const std::string& str);
-	std::vector<hosts_group> find_block(const std::string& data);
+	hosts_group find_block(const std::string& data);
 
 	void reflush();
 	void apply();
