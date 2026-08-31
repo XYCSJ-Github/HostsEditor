@@ -140,13 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="hosts_group.cpp" />
-    <ClCompile Include="hotos_io.cpp" />
+    <ClCompile Include="hosts_io.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hosts_group.h" />
     <ClInclude Include="host_struct.h" />
-    <ClInclude Include="hotos_io.h" />
+    <ClInclude Include="hosts_io.h" />
     <ClInclude Include="MyException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

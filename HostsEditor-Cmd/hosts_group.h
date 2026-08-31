@@ -1,22 +1,17 @@
 ﻿#pragma once
 #include "MyException.h"
 #include "host_struct.h"
+#include <sstream>
+#include <regex>
 class hosts_group
 {
 public:
 	hosts_group() = default;
 	~hosts_group() = default;
 
-	void add(int index);
-	void add(std::string host_name);
-	void del(int index);
-	void del(std::string host_name);
-	void enable(int index);
-	void enable(std::string host_name);
-	void disenable(int index);
-	void disenable(std::string host_name);
+	void add_host_pair(hosts_info_group hosts) { if (sizeof(hosts) == 0) { throw EmptyStruct("空的组"); }this->hosts.push_back(hosts); }
 
 private:
-	host_struct *hosts;
+	std::vector<hosts_info_group> hosts;
 };
 

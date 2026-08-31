@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="HostsEditor-Cmd/HostsEditor-Cmd.vcxproj" />
+  <Project Path="HostsEditor-Cmd/HostsEditor-Cmd.vcxproj" Id="1eb0b5fa-5f95-4db3-aea1-b053630156ce" />
 </Solution>
