@@ -1,19 +1,55 @@
 ﻿#pragma once
+#include <string>
+
+#define NULL_HOSTS_PATH_STRING 0x11
+#define NULL_HOSTS_DATA 0x12
+
+#define EMPTY_GROUP 0x21
 
 class EmptyString : public std::exception
 {
 private:
-	std::string message;
+	int type = 0x0;
 public:
-	explicit EmptyString(std::string message) { this->message = message; }
-	const char* what() const noexcept  override { return this->message.c_str(); }
+	explicit EmptyString(int type) { this->type = type; }
+	const char* what() const noexcept override
+	{
+		switch (this->type)
+		{
+		case NULL_HOSTS_PATH_STRING:
+		{
+			return "未指定hosts文件路径";
+		}
+		case NULL_HOSTS_DATA:
+		{
+			return "未读取到hosts文件内容";
+		}
+		default:
+		{
+			return "未知 EmptyString";
+		}
+		}
+	}
 };
 
 class EmptyStruct : public std::exception
 {
 private:
-	std::string message;
+	int type;
 public:
-	explicit EmptyStruct(std::string message) { this->message = message; }
-	const char* what() const noexcept  override { return this->message.c_str(); }
+	explicit EmptyStruct(int type) { this->type = type; }
+	const char* what() const noexcept override
+	{
+		switch (type)
+		{
+		case EMPTY_GROUP:
+		{
+			return "空的组";
+		}
+		default:
+		{
+			return "未知 EmptyStruct";
+		}
+		}
+	}
 };

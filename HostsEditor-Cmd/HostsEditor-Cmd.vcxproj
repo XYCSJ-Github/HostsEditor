@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="hosts_group.cpp" />
     <ClCompile Include="hosts_io.cpp" />
+    <ClCompile Include="Logout\Logout.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hosts_group.h" />
     <ClInclude Include="host_struct.h" />
     <ClInclude Include="hosts_io.h" />
+    <ClInclude Include="Logout\Logout.h" />
     <ClInclude Include="MyException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -9,7 +9,9 @@ public:
 	hosts_group() = default;
 	~hosts_group() = default;
 
-	void add_host_group(hosts_info_group hosts) { if (sizeof(hosts) == 0) { throw EmptyStruct("空的组"); }this->hosts.push_back(hosts); }
+	void add_host_group(hosts_info_group hosts) { if (sizeof(hosts) == 0) { throw EmptyStruct(EMPTY_GROUP); }this->hosts.push_back(hosts); }
+	
+	void list_to_pair();
 
 private:
 	std::vector<hosts_info_group> hosts;

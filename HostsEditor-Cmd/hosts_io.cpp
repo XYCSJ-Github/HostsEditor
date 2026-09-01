@@ -2,29 +2,23 @@
 
 void hosts_io::loadfile()
 {
-	if (this->hosts_path.empty()) throw EmptyString("未指定hosts文件路径");
+	if (this->hosts_path.empty()) throw EmptyString(NULL_HOSTS_PATH_STRING);
 
 	std::ifstream h(this->hosts_path, std::ios::in);
 	std::string i;
 	h >> i;
 
-	if (i.empty()) throw EmptyString("未读取到hosts文件内容");
+	if (i.empty()) throw EmptyString(NULL_HOSTS_DATA);
 
-	this->data = &i;
+	this->data = i;
 
 	h.close();
 }
 
 void hosts_io::Analyse()
 {
-	std::string indata = *this->data;
-
-
-}
-
-void hosts_io::reflush()
-{
-
+    hosts_group hg = this->find_block(this->data);
+    hg.list_to_pair();
 }
 
 std::string hosts_io::trim(const std::string& str)
