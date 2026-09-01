@@ -8,6 +8,7 @@ public:
 	~hosts_io() = default;
 
 	inline void setpath(std::string path) { if (path.empty()) { throw EmptyString(NULL_HOSTS_PATH_STRING); } this->hosts_path = path; }
+	std::vector<hosts_group> get_group() { return this->groups; }
 
 	void loadfile();
 	void Analyse();
