@@ -1,12 +1,14 @@
 ﻿#include "hosts_io.h"
+#include <sstream>
 
 void hosts_io::loadfile()
 {
 	if (this->hosts_path.empty()) throw EmptyString(NULL_HOSTS_PATH_STRING);
 
 	std::ifstream h(this->hosts_path, std::ios::in);
-	std::string i;
-	h >> i;
+	std::stringstream ss;
+	ss << h.rdbuf();
+	std::string i = ss.str();
 
 	if (i.empty()) throw EmptyString(NULL_HOSTS_DATA);
 
@@ -19,6 +21,7 @@ void hosts_io::Analyse()
 {
     hosts_group hg = this->find_block(this->data);
     hg.list_to_pair();
+    this->groups.push_back(hg);
 }
 
 std::string hosts_io::trim(const std::string& str)
@@ -41,6 +44,7 @@ hosts_group hosts_io::find_block(const std::string& data)
 
     std::string currentStart;
     std::vector<std::string> currentLines;
+    std::vector<std::string> ungroupedLines;
 
     hosts_group hg;
 
@@ -85,17 +89,21 @@ hosts_group hosts_io::find_block(const std::string& data)
         {
             currentLines.push_back(line);
         }
-
-        if (inBlock && !currentLines.empty())
+        else
         {
-            hosts_info_group hig
-            {
-                .start_makeer = currentStart,
-                .end_makeer = "",
-                .data_line = currentLines
-            };
-            hg.add_host_group(hig);
+            ungroupedLines.push_back(line);
         }
+    }
+
+    if (!ungroupedLines.empty())
+    {
+        hosts_info_group hig
+        {
+            .start_makeer = "#Default Start",
+            .end_makeer = "#Default End",
+            .data_line = ungroupedLines
+        };
+        hg.add_host_group(hig);
     }
 
     return hg;

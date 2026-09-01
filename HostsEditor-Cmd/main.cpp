@@ -10,7 +10,6 @@ std::string showhosts(std::vector<hosts_group> hg)
 		{
 			std::string sstr = a.start_makeer;
 			size_t spos = sstr.find('#');
-			if (spos == std::string::npos);
 
 			size_t start = spos + 1;
 			size_t end = sstr.find(' ', start);
