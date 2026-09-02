@@ -1,4 +1,34 @@
 ﻿#include "hosts_group.h"
+#include <sstream>
+
+std::string hosts_group::to_string() const
+{
+	std::string out;
+	bool first = true;
+	for (const auto& group : this->hosts)
+	{
+		if (!first) out += "\n";
+		first = false;
+
+		if (!group.is_default_group)
+		{
+			out += group.start_marker + "\n";
+		}
+
+		for (const auto& p : group.host_pair)
+		{
+			if (p.ip.empty() || p.host_name.empty()) continue;
+			out += (p.enable ? "" : "#");
+			out += p.ip + " " + p.host_name + "\n";
+		}
+
+		if (!group.is_default_group)
+		{
+			out += group.end_marker + "\n";
+		}
+	}
+	return out;
+}
 
 void hosts_group::list_to_pair()
 {

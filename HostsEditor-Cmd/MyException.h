@@ -4,8 +4,6 @@
 #define NULL_HOSTS_PATH_STRING 0x11
 #define NULL_HOSTS_DATA 0x12
 
-#define EMPTY_GROUP 0x21
-
 class EmptyString : public std::exception
 {
 private:
@@ -32,24 +30,11 @@ public:
 	}
 };
 
-class EmptyStruct : public std::exception
+class FileWriteError : public std::exception
 {
-private:
-	int type;
 public:
-	explicit EmptyStruct(int type) { this->type = type; }
 	const char* what() const noexcept override
 	{
-		switch (type)
-		{
-		case EMPTY_GROUP:
-		{
-			return "空的组";
-		}
-		default:
-		{
-			return "未知 EmptyStruct";
-		}
-		}
+		return "写入hosts文件失败";
 	}
 };
