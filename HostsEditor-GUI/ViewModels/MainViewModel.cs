@@ -7,20 +7,6 @@ using HostsEditor_GUI.Views;
 
 namespace HostsEditor_GUI.ViewModels;
 
-public sealed class ThemeOption
-{
-    public AppTheme Value { get; }
-    public string Name { get; }
-
-    public ThemeOption(AppTheme value, string name)
-    {
-        Value = value;
-        Name = name;
-    }
-
-    public override string ToString() => Name;
-}
-
 public sealed class MainViewModel : ViewModelBase
 {
     private const string DefaultHostsPath = @"C:\Windows\System32\drivers\etc\hosts";
@@ -36,12 +22,10 @@ public sealed class MainViewModel : ViewModelBase
     private bool _isBusy;
     private string _statusMessage = "";
     private string _hostsFilePath = DefaultHostsPath;
-    private ThemeOption _selectedThemeOption;
 
     public MainViewModel()
     {
         _runner = new CmdRunner(CmdRunner.DefaultExecutablePath());
-        _selectedThemeOption = ThemeOptions.First();
 
         RefreshCommand = new AsyncRelayCommand(_ => LoadAsync());
         AddCommand = new AsyncRelayCommand(_ => AddAsync());
@@ -56,7 +40,6 @@ public sealed class MainViewModel : ViewModelBase
         MoveTargetCommand = new AsyncRelayCommand(p => MoveEntryAsync(p as HostEntry));
         AddToGroupCommand = new AsyncRelayCommand(p => AddAsync(p as HostGroup));
 
-        ThemeManager.SetMode(_selectedThemeOption.Value);
         _ = LoadAsync();
     }
 
@@ -121,25 +104,6 @@ public sealed class MainViewModel : ViewModelBase
             if (SetProperty(ref _hostsFilePath, value))
             {
                 _ = LoadAsync();
-            }
-        }
-    }
-
-    public IReadOnlyList<ThemeOption> ThemeOptions { get; } =
-    [
-        new ThemeOption(AppTheme.System, "跟随系统"),
-        new ThemeOption(AppTheme.Light, "浅色"),
-        new ThemeOption(AppTheme.Dark, "深色"),
-    ];
-
-    public ThemeOption SelectedThemeOption
-    {
-        get => _selectedThemeOption;
-        set
-        {
-            if (SetProperty(ref _selectedThemeOption, value) && value is not null)
-            {
-                ThemeManager.SetMode(value.Value);
             }
         }
     }

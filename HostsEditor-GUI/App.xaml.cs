@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Windows;
-using HostsEditor_GUI.Services;
 
 namespace HostsEditor_GUI
 {
@@ -13,7 +12,7 @@ namespace HostsEditor_GUI
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            ThemeManager.Initialize();
+            ThemeMode = ThemeMode.System;
 
             base.OnStartup(e);
         }
