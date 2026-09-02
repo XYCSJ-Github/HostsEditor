@@ -1,13 +1,7 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using HostsEditor_GUI.Models;
+using HostsEditor_GUI.ViewModels;
 
 namespace HostsEditor_GUI
 {
@@ -19,6 +13,24 @@ namespace HostsEditor_GUI
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
+        }
+
+        private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (DataContext is MainViewModel viewModel)
+            {
+                viewModel.SelectedItem = e.NewValue;
+            }
+        }
+
+        private async void OnEntryCheckBoxClicked(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not MainViewModel viewModel) return;
+            if (sender is CheckBox { DataContext: HostEntry entry })
+            {
+                await viewModel.ToggleEntryAsync(entry);
+            }
         }
     }
 }

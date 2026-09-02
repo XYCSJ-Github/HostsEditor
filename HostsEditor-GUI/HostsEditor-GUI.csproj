@@ -7,6 +7,28 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x64;AnyCPU</Platforms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HostsEditor-Cmd\HostsEditor-Cmd.vcxproj">
+      <SetTargetFramework>TargetFramework=$(TargetFramework)</SetTargetFramework>
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CmdPlatform Condition="'$(Platform)' == 'AnyCPU' or '$(Platform)' == 'Any CPU' or '$(Platform)' == ''">x64</CmdPlatform>
+    <CmdPlatform Condition="'$(CmdPlatform)' == ''">$(Platform)</CmdPlatform>
+  </PropertyGroup>
+
+  <Target Name="CopyCmdExecutable" AfterTargets="Build">
+    <MSBuild Projects="..\HostsEditor-Cmd\HostsEditor-Cmd.vcxproj" Targets="GetTargetPath"
+             Properties="Configuration=$(Configuration);Platform=$(CmdPlatform)">
+      <Output TaskParameter="TargetOutputs" ItemName="_CmdExecutable" />
+    </MSBuild>
+    <Copy SourceFiles="@(_CmdExecutable)" DestinationFolder="$(OutDir)"
+          Condition="'@(_CmdExecutable)' != ''" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>
