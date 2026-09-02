@@ -1,4 +1,5 @@
 ﻿#include "hosts_io.h"
+#include "bin_cache.h"
 #include "Logout/Logout.h"
 #include <algorithm>
 #include <iostream>
@@ -162,6 +163,24 @@ int main(int argc, char** argv)
 	if (command.empty()) command = "show";
 
 	hosts_io hi;
+	auto refresh_cache = [&path, &model_name]()
+	{
+		try
+		{
+			hosts_io fresh;
+			fresh.setpath(path);
+			fresh.loadfile();
+			fresh.Analyse();
+			if (!bin_cache::save(fresh.get_group(), bin_cache::default_path()))
+			{
+				LOG_WARNING("写入bin缓存失败");
+			}
+		}
+		catch (const std::exception& e)
+		{
+			LOG_WARNING("刷新bin缓存失败: " + std::string(e.what()));
+		}
+	};
 	try
 	{
 		hi.setpath(path);
@@ -171,6 +190,7 @@ int main(int argc, char** argv)
 		if (command == "show")
 		{
 			std::cout << showhosts(hi.get_group());
+			refresh_cache();
 			return 0;
 		}
 
@@ -222,6 +242,8 @@ int main(int argc, char** argv)
 		{
 			std::cout << "已写回: " << path << "\n";
 		}
+
+		refresh_cache();
 	}
 	catch (const std::exception& e)
 	{

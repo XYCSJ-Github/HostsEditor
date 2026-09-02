@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="bin_cache.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="hosts_group.cpp">
@@ -30,8 +30,14 @@
     <ClCompile Include="Logout\Logout.cpp">
       <Filter>Logout</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bin_cache.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="hosts_group.h">
       <Filter>头文件</Filter>
     </ClInclude>

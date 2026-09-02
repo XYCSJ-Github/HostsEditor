@@ -139,12 +139,14 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bin_cache.cpp" />
     <ClCompile Include="hosts_group.cpp" />
     <ClCompile Include="hosts_io.cpp" />
     <ClCompile Include="Logout\Logout.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bin_cache.h" />
     <ClInclude Include="hosts_group.h" />
     <ClInclude Include="host_struct.h" />
     <ClInclude Include="hosts_io.h" />
