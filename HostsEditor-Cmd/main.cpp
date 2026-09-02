@@ -8,6 +8,17 @@
 
 static const char* DEFAULT_HOSTS_PATH = "C:\\Windows\\System32\\drivers\\etc\\hosts";
 
+static std::string get_group_name(const std::string& marker)
+{
+	size_t spos = marker.find('#');
+	if (spos == std::string::npos) return "";
+	size_t start = marker.find_first_not_of(" \t", spos + 1);
+	if (start == std::string::npos) return "";
+	size_t end = marker.find(' ', start);
+	if (end == std::string::npos) end = marker.length();
+	return marker.substr(start, end - start);
+}
+
 std::string showhosts(std::vector<hosts_group> hg)
 {
 	std::string outstr;
@@ -15,15 +26,7 @@ std::string showhosts(std::vector<hosts_group> hg)
 	{
 		for (hosts_info_group& a : c.get_host_group())
 		{
-			std::string sstr = a.start_marker;
-			size_t spos = sstr.find('#');
-
-			size_t start = sstr.find_first_not_of(" \t", spos + 1);
-			size_t end = sstr.find(' ', start);
-
-			if (end == std::string::npos) end = sstr.length();
-
-			outstr += sstr.substr(start, end - start) + ":\n";
+			outstr += get_group_name(a.start_marker) + ":\n";
 			for (host_pair& b : a.host_pair)
 			{
 				outstr += "IP:" + b.ip + "|Host:" + b.host_name + "|Enable:";
@@ -50,9 +53,10 @@ static void print_usage()
 		<< "命令:\n"
 		<< "  show                   解析并打印 hosts 分组内容 (默认)\n"
 		<< "  apply                  序列化并写回 hosts 文件\n"
-		<< "  enable <host>          启用匹配的条目并写回\n"
-		<< "  disable <host>         禁用匹配的条目并写回\n"
-		<< "  add <ip> <host>        新增启用条目到 Default 组并写回\n"
+		<< "  enable <host|group>    启用匹配的主机或整个分组并写回\n"
+		<< "  disable <host|group>   禁用匹配的主机或整个分组并写回\n"
+		<< "  add <ip> <host> [group]  新增启用条目到指定分组(默认Default)并写回\n"
+		<< "  moveto <host> <group>  移动条目到指定分组并写回\n"
 		<< "  remove <host>          删除匹配的条目并写回\n"
 		<< "  help                   显示本帮助\n"
 		<< "\n"
@@ -61,15 +65,37 @@ static void print_usage()
 		<< "  --cache                  命令成功后写入bin缓存 (默认不写)\n";
 }
 
-static void set_enable(std::vector<hosts_group>& groups, const std::string& host, bool enable, int& changed)
+static void set_enable(std::vector<hosts_group>& groups, const std::string& target, bool enable, int& changed)
 {
+	bool group_matched = false;
+	for (auto& g : groups)
+	{
+		for (auto& ig : g.get_host_group())
+		{
+			if (get_group_name(ig.start_marker) == target)
+			{
+				group_matched = true;
+				for (auto& p : ig.host_pair)
+				{
+					if (p.enable != enable)
+					{
+						p.enable = enable;
+						++changed;
+					}
+				}
+			}
+		}
+	}
+
+	if (group_matched) return;
+
 	for (auto& g : groups)
 	{
 		for (auto& ig : g.get_host_group())
 		{
 			for (auto& p : ig.host_pair)
 			{
-				if (p.host_name == host)
+				if (p.host_name == target && p.enable != enable)
 				{
 					p.enable = enable;
 					++changed;
@@ -94,29 +120,117 @@ static void remove_entry(std::vector<hosts_group>& groups, const std::string& ho
 	}
 }
 
-static void add_entry(std::vector<hosts_group>& groups, const std::string& ip, const std::string& host)
+static bool add_entry(std::vector<hosts_group>& groups, const std::string& ip, const std::string& host, const std::string& group_name)
 {
 	for (auto& g : groups)
 	{
 		for (auto& ig : g.get_host_group())
 		{
-			if (ig.is_default_group)
+			if (group_name.empty())
+			{
+				if (ig.is_default_group)
+				{
+					ig.host_pair.push_back(host_pair{ true, host, ip });
+					return false;
+				}
+			}
+			else if (get_group_name(ig.start_marker) == group_name)
 			{
 				ig.host_pair.push_back(host_pair{ true, host, ip });
-				return;
+				return false;
 			}
 		}
 	}
 
+	hosts_info_group ig;
+	if (group_name.empty())
+	{
+		ig.is_default_group = true;
+		ig.start_marker = "# Default Start";
+		ig.end_marker = "# Default End";
+	}
+	else
+	{
+		ig.start_marker = "# " + group_name + " Start";
+		ig.end_marker = "# " + group_name + " End";
+	}
+	ig.host_pair.push_back(host_pair{ true, host, ip });
+
 	if (!groups.empty())
 	{
-		hosts_info_group ig;
-		ig.is_default_group = true;
-		ig.start_marker = "#Default Start";
-		ig.end_marker = "#Default End";
-		ig.host_pair.push_back(host_pair{ true, host, ip });
 		groups[0].add_host_group(ig);
 	}
+	else
+	{
+		hosts_group hg;
+		hg.add_host_group(ig);
+		groups.push_back(hg);
+	}
+	return true;
+}
+
+static bool move_entry(std::vector<hosts_group>& groups, const std::string& host, const std::string& group_name, int& moved)
+{
+	std::vector<host_pair> to_move;
+	for (auto& g : groups)
+	{
+		for (auto& ig : g.get_host_group())
+		{
+			auto& pairs = ig.host_pair;
+			auto it = pairs.begin();
+			while (it != pairs.end())
+			{
+				if (it->host_name == host)
+				{
+					to_move.push_back(*it);
+					it = pairs.erase(it);
+					++moved;
+				}
+				else
+				{
+					++it;
+				}
+			}
+		}
+	}
+
+	if (moved == 0) return false;
+
+	hosts_info_group* target = nullptr;
+	for (auto& g : groups)
+	{
+		for (auto& ig : g.get_host_group())
+		{
+			if (get_group_name(ig.start_marker) == group_name)
+			{
+				target = &ig;
+				break;
+			}
+		}
+		if (target) break;
+	}
+
+	if (target == nullptr)
+	{
+		hosts_info_group ig;
+		ig.start_marker = "# " + group_name + " Start";
+		ig.end_marker = "# " + group_name + " End";
+		if (!groups.empty())
+		{
+			groups[0].add_host_group(ig);
+			target = &groups[0].get_host_group().back();
+		}
+		else
+		{
+			hosts_group hg;
+			hg.add_host_group(ig);
+			groups.push_back(hg);
+			target = &groups[0].get_host_group().back();
+		}
+	}
+
+	target->host_pair.insert(target->host_pair.end(), to_move.begin(), to_move.end());
+	return true;
 }
 
 int main(int argc, char** argv)
@@ -215,8 +329,14 @@ int main(int argc, char** argv)
 		else if (command == "add")
 		{
 			if (args.size() < 2) { print_usage(); return 1; }
-			add_entry(hi.get_group(), args[0], args[1]);
+			std::string group_name = args.size() > 2 ? args[2] : "";
+			add_entry(hi.get_group(), args[0], args[1], group_name);
 			changed = 1;
+		}
+		else if (command == "moveto")
+		{
+			if (args.size() < 2) { print_usage(); return 1; }
+			move_entry(hi.get_group(), args[0], args[1], changed);
 		}
 		else if (command == "remove")
 		{
