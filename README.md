@@ -1,4 +1,4 @@
-# HostsEditor
+﻿# HostsEditor
 
 一个面向 Windows 的 hosts 文件分组管理工具。采用「C++ 命令行引擎 + WPF 图形界面」的双层架构，并对发布产物做自解压封装：最终只需分发一个 `HostsEditor.exe`，运行时自动在 `%LOCALAPPDATA%\HostsEditor` 释放全部资源并启动图形界面，程序退出后自动清理，不留残留。
 
