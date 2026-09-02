@@ -24,4 +24,10 @@
     <Copy SourceFiles="@(_CmdExecutable)" DestinationFolder="$(OutDir)" Condition="'@(_CmdExecutable)' != ''" SkipUnchangedFiles="true" />
   </Target>
 
+  <ItemGroup>
+    <None Update="HostsEditor-Cmd.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
