@@ -173,7 +173,7 @@
 
   <PropertyGroup>
     <GuiProject>$(MSBuildProjectDirectory)\..\HostsEditor-GUI\HostsEditor-GUI.csproj</GuiProject>
-    <PublishDir>$(MSBuildProjectDirectory)\..\HostsEditor-GUI\bin\Release\net10.0-windows\publish\win-x86\</PublishDir>
+    <PublishDir>$(MSBuildProjectDirectory)\..\HostsEditor-GUI\bin\Release\net10.0-windows\publish\win-x64\</PublishDir>
     <EmbeddedRcFile>$(MSBuildProjectDirectory)\EmbeddedResources.rc</EmbeddedRcFile>
   </PropertyGroup>
 
@@ -191,8 +191,11 @@
           Inputs="@(_GuiSources)"
           Outputs="$(PublishDir)HostsEditor-GUI.exe">
     <MSBuild Projects="$(GuiProject)"
+             Targets="Restore"
+             Properties="Configuration=Release;Platform=Any CPU;RuntimeIdentifier=win-x64;SelfContained=true" />
+    <MSBuild Projects="$(GuiProject)"
              Targets="Publish"
-             Properties="Configuration=Release;PublishProfile=FolderProfile" />
+             Properties="Configuration=Release;Platform=Any CPU;RuntimeIdentifier=win-x64;SelfContained=true;PublishSingleFile=true;PublishReadyToRun=true;PublishDir=$(PublishDir)" />
   </Target>
 
   <Target Name="GenerateEmbeddedResources"

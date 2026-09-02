@@ -8,6 +8,7 @@
 namespace {
 
 constexpr const wchar_t* kGuiExeName = L"HostsEditor-GUI.exe";
+constexpr const wchar_t* kAppDirName = L"HostsEditor";
 
 std::wstring GetLocalAppDataDir()
 {
@@ -18,6 +19,48 @@ std::wstring GetLocalAppDataDir()
         return L"";
     }
     return std::wstring(buf);
+}
+
+std::wstring GetExecutableDir()
+{
+    wchar_t buf[MAX_PATH] = {};
+    DWORD len = GetModuleFileNameW(nullptr, buf, MAX_PATH);
+    if (len == 0 || len >= MAX_PATH)
+    {
+        return L"";
+    }
+
+    std::wstring path(buf, len);
+    size_t pos = path.find_last_of(L"\\/");
+    if (pos == std::wstring::npos)
+    {
+        return L"";
+    }
+    return path.substr(0, pos);
+}
+
+bool HasInstallFlag()
+{
+    int argc = 0;
+    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    if (argv == nullptr)
+    {
+        return false;
+    }
+
+    bool found = false;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::wstring arg = argv[i];
+        if (arg == L"-i" || arg == L"/i")
+        {
+            found = true;
+            break;
+        }
+    }
+
+    LocalFree(argv);
+    return found;
 }
 
 bool WriteFileBytes(const std::wstring& path, const void* data, DWORD size)
@@ -200,6 +243,31 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
         return 1;
     }
 
+    if (HasInstallFlag())
+    {
+        std::wstring exeDir = GetExecutableDir();
+        if (exeDir.empty())
+        {
+            ReleaseMutex(mutex);
+            CloseHandle(mutex);
+            return 2;
+        }
+
+        ExtractContext context{ exeDir, 0 };
+        EnumResourceNamesW(nullptr, RT_RCDATA, EnumerateResource,
+                           reinterpret_cast<LONG_PTR>(&context));
+
+        if (context.failures > 0)
+        {
+            MessageBoxW(nullptr, L"资源释放失败，请检查目录权限或磁盘空间。", L"HostsEditor",
+                        MB_OK | MB_ICONERROR);
+        }
+
+        ReleaseMutex(mutex);
+        CloseHandle(mutex);
+        return context.failures > 0 ? 3 : 0;
+    }
+
     std::wstring baseDir = GetLocalAppDataDir();
     if (baseDir.empty())
     {
@@ -208,7 +276,7 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
         return 2;
     }
 
-    std::wstring appDir = baseDir + L"\\HostsEditor";
+    std::wstring appDir = baseDir + L"\\" + kAppDirName;
     RemoveDirectoryRecursive(appDir);
 
     if (!CreateDirectoryW(appDir.c_str(), nullptr) && GetLastError() != ERROR_ALREADY_EXISTS)
