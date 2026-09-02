@@ -57,7 +57,8 @@ static void print_usage()
 		<< "  help                   显示本帮助\n"
 		<< "\n"
 		<< "选项:\n"
-		<< "  --file <路径>            指定 hosts 文件路径 (默认: " << DEFAULT_HOSTS_PATH << ")\n";
+		<< "  --file <路径>            指定 hosts 文件路径 (默认: " << DEFAULT_HOSTS_PATH << ")\n"
+		<< "  --cache                  命令成功后写入bin缓存 (默认不写)\n";
 }
 
 static void set_enable(std::vector<hosts_group>& groups, const std::string& host, bool enable, int& changed)
@@ -125,6 +126,7 @@ int main(int argc, char** argv)
 	std::string path = DEFAULT_HOSTS_PATH;
 	std::string command;
 	std::vector<std::string> args;
+	bool save_cache = false;
 
 	for (int i = 1; i < argc; ++i)
 	{
@@ -138,6 +140,10 @@ int main(int argc, char** argv)
 				return 1;
 			}
 			path = argv[++i];
+		}
+		else if (a == "--cache" || a == "-c")
+		{
+			save_cache = true;
 		}
 		else if (a == "--help" || a == "-h" || a == "help")
 		{
@@ -190,7 +196,7 @@ int main(int argc, char** argv)
 		if (command == "show")
 		{
 			std::cout << showhosts(hi.get_group());
-			refresh_cache();
+			if (save_cache) refresh_cache();
 			return 0;
 		}
 
@@ -243,7 +249,7 @@ int main(int argc, char** argv)
 			std::cout << "已写回: " << path << "\n";
 		}
 
-		refresh_cache();
+		if (save_cache) refresh_cache();
 	}
 	catch (const std::exception& e)
 	{
