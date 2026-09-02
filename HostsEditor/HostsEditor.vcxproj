@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b8374f09-83be-40dd-bbbe-782c264c9e18}</ProjectGuid>
+    <RootNamespace>HostsEditor</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared" >
+  </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+
+  <PropertyGroup Label="UserMacros" />
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>true</EnableUAC>
+      <UACExecutionLevel>requireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
+    </Link>
+    <Manifest>
+       <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>true</EnableUAC>
+      <UACExecutionLevel>requireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
+    </Link>
+    <Manifest>
+       <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>true</EnableUAC>
+      <UACExecutionLevel>requireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
+    </Link>
+    <Manifest>
+       <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>true</EnableUAC>
+      <UACExecutionLevel>requireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
+    </Link>
+    <Manifest>
+       <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ResourceCompile Include="EmbeddedResources.rc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HostsEditor-GUI\HostsEditor-GUI.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GuiProject>$(MSBuildProjectDirectory)\..\HostsEditor-GUI\HostsEditor-GUI.csproj</GuiProject>
+    <PublishDir>$(MSBuildProjectDirectory)\..\HostsEditor-GUI\bin\Release\net10.0-windows\publish\win-x86\</PublishDir>
+    <EmbeddedRcFile>$(MSBuildProjectDirectory)\EmbeddedResources.rc</EmbeddedRcFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\**\*.cs" Exclude="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\bin\**;$(MSBuildProjectDirectory)\..\HostsEditor-GUI\obj\**" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\**\*.xaml" Exclude="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\bin\**;$(MSBuildProjectDirectory)\..\HostsEditor-GUI\obj\**" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\*.csproj" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-GUI\Properties\PublishProfiles\*.pubxml" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-Cmd\**\*.cpp" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-Cmd\**\*.h" />
+    <_GuiSources Include="$(MSBuildProjectDirectory)\..\HostsEditor-Cmd\HostsEditor-Cmd.vcxproj" />
+  </ItemGroup>
+
+  <Target Name="EnsureGuiPublish"
+          Inputs="@(_GuiSources)"
+          Outputs="$(PublishDir)HostsEditor-GUI.exe">
+    <MSBuild Projects="$(GuiProject)"
+             Targets="Publish"
+             Properties="Configuration=Release;PublishProfile=FolderProfile" />
+  </Target>
+
+  <Target Name="GenerateEmbeddedResources"
+          DependsOnTargets="EnsureGuiPublish"
+          Inputs="$(PublishDir)HostsEditor-GUI.exe;$(PublishDir)HostsEditor-Cmd.exe"
+          Outputs="$(EmbeddedRcFile)"
+          BeforeTargets="PrepareForBuild">
+    <ItemGroup>
+      <_PublishFiles Include="$(PublishDir)*" Exclude="$(PublishDir)*.pdb" />
+    </ItemGroup>
+    <PropertyGroup>
+      <_PublishDirFwd>$([System.String]::Copy('$(PublishDir)').Replace('\', '/'))</_PublishDirFwd>
+    </PropertyGroup>
+    <ItemGroup>
+      <_RcLines Include="@(_PublishFiles->'&quot;%(Filename)%(Extension)&quot; RCDATA &quot;$(_PublishDirFwd)%(Filename)%(Extension)&quot;')" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(EmbeddedRcFile)" Lines="@(_RcLines)" Overwrite="true" />
+  </Target>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
+

@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+# HostsEditor build-time generated resource file
+HostsEditor/EmbeddedResources.rc
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
