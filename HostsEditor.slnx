@@ -4,6 +4,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/解决方案项/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="HostsEditor-Cmd/HostsEditor-Cmd.vcxproj" Id="1eb0b5fa-5f95-4db3-aea1-b053630156ce" />
   <Project Path="HostsEditor-GUI/HostsEditor-GUI.csproj" Id="e95ea232-f9a1-46d2-925e-b1a5eb3d7252">
     <BuildDependency Project="HostsEditor-Cmd/HostsEditor-Cmd.vcxproj" />
