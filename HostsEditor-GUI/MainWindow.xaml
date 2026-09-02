@@ -6,6 +6,7 @@
         xmlns:models="clr-namespace:HostsEditor_GUI.Models"
         mc:Ignorable="d"
         Title="Hosts 编辑器" Height="600" Width="900"
+        Icon="pack://application:,,,/icon.ico"
         MinHeight="400" MinWidth="640">
     <DockPanel>
         <!-- 顶部工具栏 -->

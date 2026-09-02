@@ -8,6 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\icon.ico</ApplicationIcon>
     <Platforms>x64;AnyCPU</Platforms>
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
@@ -23,6 +24,10 @@
     </MSBuild>
     <Copy SourceFiles="@(_CmdExecutable)" DestinationFolder="$(OutDir)" Condition="'@(_CmdExecutable)' != ''" SkipUnchangedFiles="true" />
   </Target>
+
+  <ItemGroup>
+    <Resource Include="..\icon.ico" Link="icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="HostsEditor-Cmd.exe">

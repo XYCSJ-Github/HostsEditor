@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ResourceCompile Include="EmbeddedResources.rc" />
+    <ResourceCompile Include="LauncherResources.rc" />
   </ItemGroup>
 
   <ItemGroup>

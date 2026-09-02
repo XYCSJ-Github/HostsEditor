@@ -23,5 +23,8 @@
     <ResourceCompile Include="EmbeddedResources.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="LauncherResources.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
