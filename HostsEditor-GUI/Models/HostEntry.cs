@@ -5,6 +5,7 @@ public class HostEntry : ObservableObject
     private string _ip = "";
     private string _hostName = "";
     private bool _isEnabled = true;
+    private bool _isSelected;
 
     public string Ip
     {
@@ -22,5 +23,11 @@ public class HostEntry : ObservableObject
     {
         get => _isEnabled;
         set => SetProperty(ref _isEnabled, value);
+    }
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetProperty(ref _isSelected, value);
     }
 }

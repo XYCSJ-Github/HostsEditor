@@ -53,11 +53,13 @@ static void print_usage()
 		<< "命令:\n"
 		<< "  show                   解析并打印 hosts 分组内容 (默认)\n"
 		<< "  apply                  序列化并写回 hosts 文件\n"
-		<< "  enable <host|group>    启用匹配的主机或整个分组并写回\n"
-		<< "  disable <host|group>   禁用匹配的主机或整个分组并写回\n"
+		<< "  enable <host|group>...    启用匹配的主机或整个分组并写回\n"
+		<< "  disable <host|group>...   禁用匹配的主机或整个分组并写回\n"
 		<< "  add <ip> <host> [group]  新增启用条目到指定分组(默认Default)并写回\n"
+		<< "  edit <旧IP> <旧主机> <新IP> <新主机>  修改匹配条目的 IP 与主机名并写回\n"
 		<< "  moveto <host> <group>  移动条目到指定分组并写回\n"
-		<< "  remove <host>          删除匹配的条目并写回\n"
+		<< "  movetomany <group> <host>...  批量移动条目到指定分组并写回\n"
+		<< "  remove <host>...       删除匹配的条目并写回\n"
 		<< "  help                   显示本帮助\n"
 		<< "\n"
 		<< "选项:\n"
@@ -233,6 +235,26 @@ static bool move_entry(std::vector<hosts_group>& groups, const std::string& host
 	return true;
 }
 
+static void edit_entry(std::vector<hosts_group>& groups, const std::string& old_ip, const std::string& old_host,
+	const std::string& new_ip, const std::string& new_host, int& changed)
+{
+	for (auto& g : groups)
+	{
+		for (auto& ig : g.get_host_group())
+		{
+			for (auto& p : ig.host_pair)
+			{
+				if (p.ip == old_ip && p.host_name == old_host)
+				{
+					p.ip = new_ip;
+					p.host_name = new_host;
+					++changed;
+				}
+			}
+		}
+	}
+}
+
 int main(int argc, char** argv)
 {
 	LOG_CREATE_MODEL_NAME("main");
@@ -319,12 +341,12 @@ int main(int argc, char** argv)
 		if (command == "enable")
 		{
 			if (args.empty()) { print_usage(); return 1; }
-			set_enable(hi.get_group(), args[0], true, changed);
+			for (const auto& t : args) set_enable(hi.get_group(), t, true, changed);
 		}
 		else if (command == "disable")
 		{
 			if (args.empty()) { print_usage(); return 1; }
-			set_enable(hi.get_group(), args[0], false, changed);
+			for (const auto& t : args) set_enable(hi.get_group(), t, false, changed);
 		}
 		else if (command == "add")
 		{
@@ -333,15 +355,29 @@ int main(int argc, char** argv)
 			add_entry(hi.get_group(), args[0], args[1], group_name);
 			changed = 1;
 		}
+		else if (command == "edit")
+		{
+			if (args.size() < 4) { print_usage(); return 1; }
+			edit_entry(hi.get_group(), args[0], args[1], args[2], args[3], changed);
+		}
 		else if (command == "moveto")
 		{
 			if (args.size() < 2) { print_usage(); return 1; }
 			move_entry(hi.get_group(), args[0], args[1], changed);
 		}
+		else if (command == "movetomany")
+		{
+			if (args.size() < 2) { print_usage(); return 1; }
+			const std::string group_name = args[0];
+			for (size_t i = 1; i < args.size(); ++i)
+			{
+				move_entry(hi.get_group(), args[i], group_name, changed);
+			}
+		}
 		else if (command == "remove")
 		{
 			if (args.empty()) { print_usage(); return 1; }
-			remove_entry(hi.get_group(), args[0], changed);
+			for (const auto& t : args) remove_entry(hi.get_group(), t, changed);
 		}
 		else if (command == "apply")
 		{

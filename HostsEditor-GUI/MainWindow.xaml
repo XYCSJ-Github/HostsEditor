@@ -14,10 +14,21 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="刷新" Command="{Binding RefreshCommand}" />
                 <Button Content="添加" Command="{Binding AddCommand}" Margin="6,0,0,0" />
-                <Button Content="启用" Command="{Binding EnableSelectedCommand}" Margin="6,0,0,0" />
-                <Button Content="禁用" Command="{Binding DisableSelectedCommand}" Margin="6,0,0,0" />
-                <Button Content="移动到" Command="{Binding MoveSelectedCommand}" Margin="6,0,0,0" />
-                <Button Content="删除" Command="{Binding RemoveSelectedCommand}" Margin="6,0,0,0" />
+                <Button Content="编辑" Command="{Binding EditSelectedCommand}" Margin="6,0,0,0"
+                        ToolTip="编辑选中的条目（仅单选）" />
+                <Button Content="启用" Command="{Binding EnableSelectedCommand}" Margin="6,0,0,0"
+                        ToolTip="启用全部选中项（支持多选）" />
+                <Button Content="禁用" Command="{Binding DisableSelectedCommand}" Margin="6,0,0,0"
+                        ToolTip="禁用全部选中项（支持多选）" />
+                <Button Content="移动到" Command="{Binding MoveSelectedCommand}" Margin="6,0,0,0"
+                        ToolTip="移动全部选中条目到其他分组" />
+                <Button Content="删除" Command="{Binding RemoveSelectedCommand}" Margin="6,0,0,0"
+                        ToolTip="删除全部选中条目" />
+                <Separator Margin="6,0,6,0" />
+                <Button Content="打开文件" Command="{Binding OpenFileCommand}"
+                        ToolTip="用记事本打开 hosts 文件" />
+                <Button Content="打开文件夹" Command="{Binding OpenFolderCommand}" Margin="6,0,0,0"
+                        ToolTip="在资源管理器中定位 hosts 文件" />
             </StackPanel>
         </Border>
 
@@ -33,12 +44,27 @@
             </DockPanel>
         </Border>
 
-        <!-- 主体分组树 -->
+        <!-- 主体分组树：勾选复选框表示选择，可多选 -->
         <TreeView ItemsSource="{Binding Groups}" Padding="4"
-                  SelectedItemChanged="OnTreeViewSelectedItemChanged"
+                  PreviewMouseLeftButtonDown="OnTreeViewPreviewMouseLeftButtonDown"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.Resources>
+                <!-- 选择由复选框表达，去掉 TreeView 自带选中蓝底 -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{x:Static SystemColors.ControlTextColor}" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.ControlTextColor}" />
+                <SolidColorBrush x:Key="TreeViewItemBackgroundSelected" Color="Transparent" />
+                <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPointerOver" Color="Transparent" />
+                <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPressed" Color="Transparent" />
+                <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedDisabled" Color="Transparent" />
+                <SolidColorBrush x:Key="TreeViewItemForegroundSelected" Color="{x:Static SystemColors.ControlTextColor}" />
                 <HierarchicalDataTemplate DataType="{x:Type models:HostGroup}" ItemsSource="{Binding Entries}">
                     <Border Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
                             Padding="2,2">
@@ -57,11 +83,20 @@
                             </ContextMenu>
                         </Border.ContextMenu>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                      Click="OnSelectionCheckBoxClick"
+                                      VerticalAlignment="Center" Margin="0,0,6,0"
+                                      ToolTip="选择/取消选择整组（组内条目一并选中/取消）" />
+                            <TextBlock x:Name="GroupNameText" Text="{Binding Name}" FontWeight="Bold" />
                             <TextBlock Text="{Binding Entries.Count, StringFormat=({0})}"
                                        Margin="6,0,0,0" />
                         </StackPanel>
                     </Border>
+                    <HierarchicalDataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding AllDisabled}" Value="True">
+                            <Setter TargetName="GroupNameText" Property="TextDecorations" Value="Strikethrough" />
+                        </DataTrigger>
+                    </HierarchicalDataTemplate.Triggers>
                 </HierarchicalDataTemplate>
 
                 <DataTemplate DataType="{x:Type models:HostEntry}">
@@ -69,6 +104,10 @@
                                 Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
                         <StackPanel.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="编辑..."
+                                          Command="{Binding PlacementTarget.Tag.EditTargetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <Separator />
                                 <MenuItem Header="启用"
                                           Command="{Binding PlacementTarget.Tag.EnableTargetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                           CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
@@ -84,15 +123,19 @@
                                           CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                             </ContextMenu>
                         </StackPanel.ContextMenu>
-                        <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay}" Click="OnEntryCheckBoxClicked"
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                  Click="OnSelectionCheckBoxClick"
                                   VerticalAlignment="Center" Margin="2,0,8,0"
-                                  ToolTip="切换启用/禁用" />
+                                  ToolTip="选择/取消选择（可多选，按住 Shift 连选）" />
                         <TextBlock x:Name="IpText" Text="{Binding Ip}" Margin="0,0,12,0" VerticalAlignment="Center" />
                         <TextBlock x:Name="HostText" Text="{Binding HostName}" VerticalAlignment="Center" />
                     </StackPanel>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsEnabled}" Value="False">
-                            <Setter TargetName="Row" Property="Opacity" Value="0.5" />
+                            <Setter TargetName="IpText" Property="Opacity" Value="0.5" />
+                            <Setter TargetName="HostText" Property="Opacity" Value="0.5" />
+                            <Setter TargetName="IpText" Property="TextDecorations" Value="Strikethrough" />
+                            <Setter TargetName="HostText" Property="TextDecorations" Value="Strikethrough" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
